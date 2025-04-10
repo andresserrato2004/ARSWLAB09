@@ -1,4 +1,10 @@
 ### Escuela Colombiana de Ingeniería
+
+## Andres Serrato camero
+
+## Andrea Valentina Torres Tobar
+
+
 ### Arquitecturas de Software - ARSW
 
 ## Escalamiento en Azure con Maquinas Virtuales, Sacale Sets y Service Plans
