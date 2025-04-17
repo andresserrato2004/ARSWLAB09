@@ -110,9 +110,6 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 
 8. Dírijase ahora a Azure y verifique el consumo de CPU para la VM. (Los resultados pueden tardar 5 minutos en aparecer).
 
-![image](https://github.com/user-attachments/assets/4637c253-2666-4c63-8a40-1c35611c0af5)
-
-
 9. Ahora usaremos Postman para simular una carga concurrente a nuestro sistema. Siga estos pasos.
     * Instale newman con el comando `npm install newman -g`. Para conocer más de Newman consulte el siguiente [enlace](https://learning.getpostman.com/docs/postman/collection-runs/command-line-integration-with-newman/).
     * Diríjase hasta la ruta `FibonacciApp/postman` en una maquina diferente a la VM.
@@ -182,7 +179,7 @@ Azure crea automáticamente varios recursos al crear una VM. Generalmente incluy
 
 5. Adjunte imágen del consumo de CPU de la VM e interprete por qué la función consume esa cantidad de CPU.
 
-![Imágen 3](images/part1/part1-vm-resize.png)
+![image](https://github.com/user-attachments/assets/4637c253-2666-4c63-8a40-1c35611c0af5)
 
 La función consume mucha CPU porque realiza muchos cálculos pesados de forma ineficiente sin optimización. Esto genera una sobrecarga para un solo hilo en la VM, elevando el consumo a más del 50%.
 
