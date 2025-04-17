@@ -309,25 +309,25 @@ http://52.155.223.248/
 http://52.155.223.248/fibonacci/1
 ```
 
-![alt text](image.png)
+![alt text](images/image.png)
 
-![alt text](image-1.png)
+![alt text](images/image-1.png)
 
 2. Realice las pruebas de carga con `newman` que se realizaron en la parte 1 y haga un informe comparativo donde contraste: tiempos de respuesta, cantidad de peticiones respondidas con éxito, costos de las 2 infraestrucruras, es decir, la que desarrollamos con balanceo de carga horizontal y la que se hizo con una maquina virtual escalada.
 
-![alt text](image-2.png)
+![alt text](images/image-2.png)
 
 
-![alt text](image-3.png)
+![alt text](images/image-3.png)
 
 
-![alt text](image-4.png)
+![alt text](images/image-4.png)
 
-![alt text](image-5.png)
+![alt text](images/image-5.png)
 
-![alt text](image-6.png)
+![alt text](images/image-6.png)
 
-![alt text](image-7.png)
+![alt text](images/image-7.png)
 3. Agregue una 4 maquina virtual y realice las pruebas de newman, pero esta vez no lance 2 peticiones en paralelo, sino que incrementelo a 4. Haga un informe donde presente el comportamiento de la CPU de las 4 VM y explique porque la tasa de éxito de las peticiones aumento con este estilo de escalabilidad.
 
 ```
@@ -440,5 +440,5 @@ Al escalar el sistema de 3 a 4 máquinas virtuales y aumentar el número de peti
 
 ### Presente el Diagrama de Despliegue de la solución.
 
-![alt text](image-8.png)
+![alt text](images/image-8.png)
 
