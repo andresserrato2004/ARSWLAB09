@@ -296,6 +296,10 @@ forever start FibonacciApp.js
 
 Realice este proceso para las 3 VMs, por ahora lo haremos a mano una por una, sin embargo es importante que usted sepa que existen herramientas para aumatizar este proceso, entre ellas encontramos Azure Resource Manager, OsDisk Images, Terraform con Vagrant y Paker, Puppet, Ansible entre otras.
 
+### Todas las maquinas creadas 
+
+![alt text](image-9.png)
+
 #### Probar el resultado final de nuestra infraestructura
 
 1. Porsupuesto el endpoint de acceso a nuestro sistema será la IP pública del balanceador de carga, primero verifiquemos que los servicios básicos están funcionando, consuma los siguientes recursos:
@@ -305,8 +309,25 @@ http://52.155.223.248/
 http://52.155.223.248/fibonacci/1
 ```
 
+![alt text](image.png)
+
+![alt text](image-1.png)
+
 2. Realice las pruebas de carga con `newman` que se realizaron en la parte 1 y haga un informe comparativo donde contraste: tiempos de respuesta, cantidad de peticiones respondidas con éxito, costos de las 2 infraestrucruras, es decir, la que desarrollamos con balanceo de carga horizontal y la que se hizo con una maquina virtual escalada.
 
+![alt text](image-2.png)
+
+
+![alt text](image-3.png)
+
+
+![alt text](image-4.png)
+
+![alt text](image-5.png)
+
+![alt text](image-6.png)
+
+![alt text](image-7.png)
 3. Agregue una 4 maquina virtual y realice las pruebas de newman, pero esta vez no lance 2 peticiones en paralelo, sino que incrementelo a 4. Haga un informe donde presente el comportamiento de la CPU de las 4 VM y explique porque la tasa de éxito de las peticiones aumento con este estilo de escalabilidad.
 
 ```
@@ -318,16 +339,106 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
 
 **Preguntas**
 
-* ¿Cuáles son los tipos de balanceadores de carga en Azure y en qué se diferencian?, ¿Qué es SKU, qué tipos hay y en qué se diferencian?, ¿Por qué el balanceador de carga necesita una IP pública?
-* ¿Cuál es el propósito del *Backend Pool*?
-* ¿Cuál es el propósito del *Health Probe*?
-* ¿Cuál es el propósito de la *Load Balancing Rule*? ¿Qué tipos de sesión persistente existen, por qué esto es importante y cómo puede afectar la escalabilidad del sistema?.
-* ¿Qué es una *Virtual Network*? ¿Qué es una *Subnet*? ¿Para qué sirven los *address space* y *address range*?
-* ¿Qué son las *Availability Zone* y por qué seleccionamos 3 diferentes zonas?. ¿Qué significa que una IP sea *zone-redundant*?
-* ¿Cuál es el propósito del *Network Security Group*?
-* Informe de newman 1 (Punto 2)
-* Presente el Diagrama de Despliegue de la solución.
+
+
+### 1. Tipos de Balanceadores de Carga en Azure
+
+Azure ofrece dos tipos de balanceadores de carga:
+
+- **Load Balancer Público**: Distribuye tráfico entrante desde Internet hacia máquinas virtuales en Azure. Requiere una IP pública.
+- **Load Balancer Interno (Internal Load Balancer - ILB)**: Distribuye tráfico dentro de una red virtual. No es accesible desde Internet y se utiliza para aplicaciones internas.
+
+**Diferencias:**
+
+- El balanceador público expone servicios al exterior.
+- El balanceador interno se utiliza para comunicación privada entre recursos internos.
+
+### 2. ¿Qué es SKU y en qué se diferencian sus tipos?
+
+SKU (Stock Keeping Unit) define las características del servicio utilizado, incluyendo tamaño, funcionalidad y precio.
+
+**Tipos de SKU en Load Balancer:**
+
+- **Basic**:
+  - No admite zonas de disponibilidad.
+  - Soporte limitado para reglas.
+  - Menos características de seguridad.
+
+- **Standard**:
+  - Soporte para Availability Zones.
+  - Alta escalabilidad y rendimiento.
+  - Requiere Network Security Groups para filtrar tráfico.
+
+### 3. ¿Por qué el balanceador de carga necesita una IP pública?
+
+Cuando el balanceador es público, necesita una IP pública para recibir solicitudes desde Internet y redirigirlas al backend (máquinas virtuales). Esta IP es el punto de entrada externo a la aplicación.
+
+### 4. Propósito del Backend Pool
+
+El Backend Pool define el conjunto de recursos (como VMs) que recibirán el tráfico del balanceador. Cada VM en este pool actúa como una instancia del servicio que se está escalando.
+
+### 5. Propósito del Health Probe
+
+El Health Probe verifica periódicamente el estado de las instancias del backend pool. Si una VM falla la verificación, deja de recibir tráfico hasta recuperarse, garantizando así alta disponibilidad.
+
+### 6. Propósito de la Load Balancing Rule
+
+La Load Balancing Rule define cómo se distribuye el tráfico entrante desde el balanceador hacia el backend pool.
+
+**Incluye:**
+
+- Puerto fuente y destino.
+- Protocolo (TCP/UDP).
+- Health probe asociado.
+
+### Tipos de sesión persistente (Affinity)
+
+- **None (default)**: Las solicitudes pueden ser dirigidas a cualquier VM.
+- **Client IP**: Todas las solicitudes desde una misma IP van a la misma VM.
+
+**Importancia:**
+
+La afinidad mantiene la sesión del usuario, útil para aplicaciones sin almacenamiento de estado compartido. Sin embargo, puede reducir la escalabilidad al generar una distribución desigual del tráfico.
+
+### 7. Redes Virtuales y Direccionamiento
+
+- **Virtual Network (VNet)**: Red privada lógica en Azure que permite la comunicación entre recursos.
+- **Subnet**: División lógica dentro de una VNet usada para organizar recursos y aplicar reglas de red.
+
+**Address Space**: Rango de direcciones IP (formato CIDR) que define toda la VNet.
+
+**Address Range**: Rango específico asignado a una Subnet dentro del Address Space.
+
+### 8. Availability Zones y Redundancia de IP
+
+- **Availability Zones**: Zonas físicas independientes dentro de una región de Azure (con energía, red y refrigeración separadas).
+
+Seleccionar tres zonas permite distribuir VMs entre ellas, aumentando la resiliencia ante fallas físicas o interrupciones en una zona específica.
+
+- **IP zone-redundant**: Una IP accesible desde múltiples zonas de disponibilidad, garantizando alta disponibilidad incluso si una zona falla.
+
+### 9. Propósito del Network Security Group (NSG)
+
+El NSG es un firewall que controla el tráfico entrante y saliente de los recursos de red (como VMs o subnets). Utiliza reglas de seguridad para permitir o denegar tráfico con base en:
+
+- Dirección (inbound / outbound)
+- Protocolo (TCP / UDP)
+- Rango de direcciones IP y puertos
+
+
+### Informe de newman 1 (Punto 2)
+
+
+Al escalar el sistema de 3 a 4 máquinas virtuales y aumentar el número de peticiones concurrentes a 4 procesos de 10 peticiones cada uno, se notaron mejoras claras en el rendimiento del sistema.
+
+- **Distribución de carga más eficiente**: El balanceador logró repartir mejor las peticiones entre las instancias, evitando sobrecargas.
+- **Uso de CPU controlado**: Ninguna VM mostró saturación. Todas mantuvieron un uso estable de CPU, lo que indica que el sistema estaba preparado para manejar el aumento de tráfico.
+- **Mayor tasa de éxito**: Todas las peticiones fueron respondidas correctamente. Esto confirma que el sistema responde mejor cuando se escala horizontalmente frente a una mayor demanda.
+- **Tiempo de respuesta estable**: No se presentaron cuellos de botella ni tiempos de espera elevados.
 
 
 
+### Presente el Diagrama de Despliegue de la solución.
+
+![alt text](image-8.png)
 
